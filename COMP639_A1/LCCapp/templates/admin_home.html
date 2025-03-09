@@ -1,0 +1,17 @@
+{% extends 'userbase.html' %}
+
+{% block title %}Admin Home{% endblock %}
+
+{# Set the active page to be highlighted in the navigation bar. #}
+{% set active_page = 'home' %}
+
+{% block content %}
+<section class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <h1>Admin Home Page</h1>
+            <p class="lead text-muted">This is the page an admin user sees when they first sign in. It should provide quick access to the information and features they're most likely to need when using the app.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

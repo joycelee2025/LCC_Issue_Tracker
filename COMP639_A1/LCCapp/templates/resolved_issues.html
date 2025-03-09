@@ -1,0 +1,83 @@
+{% extends 'userbase.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{# Set the active page to be highlighted in the navigation bar. #}
+{% set active_page = 'profile' %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+    {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+{% endif %}
+{% endwith %}
+ 
+<section class="container">
+    <form>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-sm-4">
+                <div class = "mb-3">
+                    <br><h2>{{profile.username}} ({{profile.role}})</h2>
+                    <label for="profile_image" class="form-label"></label>
+                    <br>
+                    <img src="{{ url_for('static', filename='uploads/' + (profile.profile_image)) }}" class="img-rounded" width="200" height="200" alt="profile picture">
+                </div>
+                <div class="mb-3">
+                    <ul class="list-group">
+                        {% if session['role'] in ['admin'] %}
+                        <li class="list-group-item"><a href="{{url_for('users_list')}}">List of all users</a></li>
+                        {% endif %}
+                        <li class="list-group-item"><a href="{{url_for('my_details')}}">My details</a></li>
+                        <li class="list-group-item"><a href="{{url_for('my_issues')}}">My issues</a></li>
+                        <li class="list-group-item"><a href="{{url_for('my_password')}}">My password</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-sm-8">
+                <h2>My issues</h2>
+                {% if session['role'] in ['admin', 'helper'] %}       
+                <div class="mb-3">
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="{{url_for('resolved_issues')}}">Resolved issues</a></li>
+                        <li class="list-group-item"><a href="{{url_for('unresolved_issues')}}">Un-resolved issues</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+                <table class="table table-hover table-striped table-responsive overflow-auto">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Issue ID</th>
+                            <th scope="col">Summary</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ii in issue %}
+                        <tr>
+                            <td>{{ ii.created_at }}</td>
+                            <td>{{ ii.issue_id }}</td>
+                            <td class="text-truncate" style="max-width: 200px;">{{ ii.summary }}</td>
+                            <td>{{ ii.status }}</td>
+                            <td><a href="{{ url_for('view_issue', issue_id=ii.issue_id) }}">View</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="mb-3">
+                    <a href="{{ url_for('add_issue') }}" class="btn btn-primary">Report new issue</a>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

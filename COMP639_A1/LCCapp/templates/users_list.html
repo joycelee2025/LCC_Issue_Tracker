@@ -1,0 +1,89 @@
+{% extends 'userbase.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{# Set the active page to be highlighted in the navigation bar. #}
+{% set active_page = 'profile' %}
+
+{% block content %}
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+    {% endif %}
+{% endwith %}
+    
+<section class="container">
+    <form>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-sm-4">
+                <div class = "mb-3">
+                    <br><h2>{{profile.username}} ({{profile.role}})</h2>
+                    <label for="profile_image" class="form-label"></label>
+                    <br>
+                    <img src="{{ url_for('static', filename='uploads/' + (profile.profile_image)) }}" class="img-rounded" width="200" height="200" alt="profile picture">
+                    <div class="invalid-feedback">{{ profile_image_error }}</div>
+                </div>
+                <div class="mb-3">
+                    <ul class="list-group">
+                        {% if session['role'] in ['admin'] %}
+                        <li class="list-group-item"><a href="{{url_for('users_list')}}">List of all users</a></li>
+                        {% endif %}
+                        <li class="list-group-item"><a href="{{url_for('my_details')}}">My details</a></li>
+                        <li class="list-group-item"><a href="{{url_for('my_issues')}}">My issues</a></li>
+                        <li class="list-group-item"><a href="{{url_for('my_password')}}">My password</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-sm-8">
+                <h2>Users list</h2>
+
+                <form method="GET" action="{{ url_for('users_list') }}" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" placeholder="Search users..." value="{{ request.args.get('search', '') }}">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+                
+                <div class="table-wrap overflow-auto">
+                    <table class="table table-hover table-striped table-responsive overflow-auto">
+                        <thead>
+                            <tr>
+                                <th scope="col">User Name</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for uu in users %}
+                            <tr>
+                                <td>{{ uu.username }}</td>
+                                <td class="text-truncate" style="max-width: 200px;">{{ uu.first_name }}</td>
+                                <td>{{ uu.last_name }}</td>
+                                <td>{{ uu.role }}</td>
+                                <td>{{ uu.status }}</td>
+                                <td><a href="{{ url_for('view_user', user_id=uu.user_id) }}">View</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                <div class="mb-3">
+                    <a href="{{ url_for('add_issue') }}" class="btn btn-primary">Report new issue</a>
+                </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

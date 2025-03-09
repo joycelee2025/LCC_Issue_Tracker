@@ -1,0 +1,54 @@
+{% extends 'userbase.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{# Set the active page to be highlighted in the navigation bar. #}
+{% set active_page = 'profile' %}
+
+{% block content %}
+ 
+<section class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-sm-4">
+                <div class = "mb-3">
+                    <br><h2>{{profile.username}} ({{profile.role}})</h2>
+                    <label for="profile_image" class="form-label"></label>
+                    <br>
+                    <img src="{{ url_for('static', filename='uploads/' + (profile.profile_image)) }}" class="img-rounded" width="200" height="200" alt="profile picture">
+                </div>
+                <div class="mb-3">
+                    <ul class="list-group">
+                        {% if session['role'] in ['admin'] %}
+                        <li class="list-group-item"><a href="{{url_for('users_list')}}">List of all users</a></li>
+                        {% endif %}
+                        <li class="list-group-item"><a href="{{url_for('my_details')}}">My details</a></li>
+                        <li class="list-group-item"><a href="{{url_for('my_issues')}}">My issues</a></li>
+                        <li class="list-group-item"><a href="{{url_for('my_password')}}">My password</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-sm-8">
+                <form action="{{ url_for('add_issue') }}" method="post">
+                    <h2>Report new issue</h2>
+                    <br>
+                    <div class="mb-3">
+                        <label for="summary" class="form-label">Summary</label>
+                        <input type="text" class="form-control" id="summary" name="summary" maxlength="100" value="{{ summary }}" required>
+                        <small class="form-text text-muted">A brief summary of the issue (e.g. “Fire pit damaged”).</small>
+                        <div class="invalid-feedback">{{ summary_error }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" maxlength="300" rows="4" required>{{ description }}</textarea>
+                        <small class="form-text text-muted">A detailed description of the issue (e.g. “Some of the rocks around the fire pit in site 4 are missing, leaving it unsafe to use.”).</small>
+                        <div class="invalid-feedback">{{ description_error }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Add issue</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+</section>
+{% endblock %}
